@@ -9,7 +9,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react-dom.js"></script>
 <script>
-    function my_component(props) {
+    function MyComponent(props) {
         var name = props.name;
 
         return React.DOM.h1({
@@ -17,7 +17,7 @@
         }, 'Hello ' + name);
     }
 
-    var hola = React.createElement(my_component, {
+    var hola = React.createElement(MyComponent, {
         name: 'ReactJs',
     });
 
@@ -29,7 +29,7 @@
     setTimeout(
         function() {
             ReactDOM.render(
-                React.createElement(my_component, { name: 'ReactJS!' }),
+                React.createElement(MyComponent, { name: 'ReactJS!' }),
                 document.getElementById('app')
             );
         },
