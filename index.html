@@ -10,17 +10,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react-dom.js"></script>
 <script type="text/babel">
-    //Compenente puro con una funcion
-    function MyComponent(props) {
-        const name = props.name;
-
+    //"Compenentes" puros - UI - son utlizados en otra parte
+    function Hola(props) {
         return (
-            <h1 id="Title">
-                Hello {name}
+            <h1 id="Title" onClick={props.onClick}>
+                Hola {props.name} {props.count}
             </h1>
         );
     }
 
+    //Componentes "contenedores" - logica y no UI
     class MiComponente extends React.Component {
         constructor(props) {
             super(props);
@@ -29,7 +28,6 @@
                 count: 0,
             };
 
-            //carga los state a la funcion. El bind siempre va en el constructor
             this.handleClick = this.handleClick.bind(this);
         }
 
@@ -40,11 +38,12 @@
         }
 
         render() {
-            const name = this.props.name;
             return (
-                <h1 id="Title" onClick={this.handleClick}>
-                    Hello {name} {this.state.count}
-                </h1>
+                <Hola
+                    name={this.props.name}
+                    count={this.state.count}
+                    onClick={this.handleClick}
+                />
             );
         };
     }
