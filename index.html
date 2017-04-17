@@ -19,6 +19,14 @@
         );
     }
 
+    function Hola2(props) {
+        return (
+                <h2 id="Title" onClick={props.onClick}>
+                    Hola {props.name} {props.count}
+                </h2>
+        );
+    }
+
     //Componentes "contenedores" - logica y no UI
     class MiComponente extends React.Component {
         constructor(props) {
@@ -31,6 +39,52 @@
             this.handleClick = this.handleClick.bind(this);
         }
 
+        //Antes de renderizar, aun no esta el DOM y se puede modificar los estados del componente
+        componentWillMount() {
+            this.setState({
+                count: 1,
+            });
+            console.log('El componente se va a montar');
+        }
+
+        //Despues que la aplicación se monta, se pueden hacer peticiones HTTP
+        componentDidMount() {
+            document.addEventListener('click', this.handleClick);
+        }
+
+        //Cambiar estados si los props cambian
+        componentWillReceiveProps(nextProps) {
+            if (nextProps.name !== this.props.name) {
+                this.setState({
+                    count: this.state.count * 2,
+                });
+            }
+        }
+
+        //Devuelve si el componente se tiene que actualizar
+        shouldComponentUpdate(nextProps, nextState) {
+            if (nextState.count !== this.state.count) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        //Antes de actualizar el componente
+        componentWillUpdate() {
+            console.log('El componente se va a actualizar');
+        }
+
+        //Despues de actualizar el componente
+        componentDidUpdate() {
+            console.log('El componente se actualizó');
+        }
+
+        //Limpiar eventos pendientes o lentos
+        componentWillUnmount() {
+            document.removeEventListener('click', this.handleClick);
+        }
+
         handleClick(){
             this.setState({
                 count: this.state.count + 1,
@@ -39,11 +93,18 @@
 
         render() {
             return (
-                <Hola
-                    name={this.props.name}
-                    count={this.state.count}
-                    onClick={this.handleClick}
-                />
+                <div>
+                    <Hola
+                        name={this.props.name}
+                        count={this.state.count}
+                        onClick={this.handleClick}
+                    />
+                    <Hola2
+                        name={this.props.name}
+                        count={this.state.count}
+                        onClick={this.handleClick}
+                    />
+                </div>
             );
         };
     }
