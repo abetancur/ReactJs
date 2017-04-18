@@ -10,11 +10,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react-dom.js"></script>
 <script type="text/babel">
+    var global = 'Hola'; //Datos globales es mala practica
+
     //"Compenentes" puros - UI - son utlizados en otra parte
-    function Hola(props) {
+    function Hola(props, context) {
         return (
             <h1 id="Title" onClick={props.onClick} onMouseEnter={props.onMouseEnter}>
-                Hola {props.name} {props.count}
+                Hola {props.name} {context.count}
             </h1>
         );
     }
@@ -25,6 +27,10 @@
                     Hola {props.name} {props.count}
                 </h2>
         );
+    }
+
+    Hola.contextTypes = {
+      count: React.PropTypes.number,
     }
 
     //Componentes "contenedores" - logica y no UI
@@ -38,6 +44,13 @@
 
             this.handleClick = this.handleClick.bind(this);
             this.handleMouseEnter = this.handleMouseEnter.bind(this);
+        }
+
+        //Contexto: definimos datos accesibles en toda la aplicación
+        getChildContext() {
+            return {
+              count: this.state.count,
+            }
         }
 
         //Antes de renderizar, aun no esta el DOM y se puede modificar los estados del componente
@@ -116,6 +129,11 @@
                 </div>
             );
         };
+    }
+
+    //Definimos el tipo de dato a enviar en el Contexto
+    MiComponente.childContextTypes = {
+      count: React.PropTypes.number, //Funcion para definir tipo de una propiedad
     }
 
     ReactDOM.render(
