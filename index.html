@@ -10,134 +10,80 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react-dom.js"></script>
 <script type="text/babel">
-    var global = 'Hola'; //Datos globales es mala practica
+    /*Componentes de alto orden (HOC)
+     * reutilizar funcionalidades entre varios componente*/
+    function Counter(WrappedComponent) {
+        class CounterHOC extends React.Component {
+            constructor(props) {
+                super(props);
 
-    //"Compenentes" puros - UI - son utlizados en otra parte
-    function Hola(props, context) {
-        return (
-            <h1 id="Title" onClick={props.onClick} onMouseEnter={props.onMouseEnter}>
-                Hola {props.name} {context.count}
-            </h1>
-        );
+                this.state = {
+                    count: 0,
+                }
+                this.handleClick = this.handleClick.bind(this);
+            }
+
+            handleClick() {
+                this.setState({
+                    count: this.state.count + 1,
+                });
+            }
+
+            getChildContext() {
+                return {
+                    count: this.state.count,
+                }
+            }
+
+            render() {
+                return (
+                        <WrappedComponent
+                                onClick={this.handleClick}
+                                {...this.props}
+                        />
+                )
+            }
+        }
+
+        CounterHOC.childContextTypes = {
+            count: React.PropTypes.number,
+        }
+
+        return CounterHOC;
     }
 
-    function Hola2(props) {
+    function Hola(props, context) {
         return (
-                <h2 id="Title" onClick={props.onClick}>
-                    Hola {props.name} {props.count}
-                </h2>
+                <h1 id="Title" onClick={props.onClick}>
+                    Hola {props.name} {context.count}
+                </h1>
         );
     }
 
     Hola.contextTypes = {
-      count: React.PropTypes.number,
+        count: React.PropTypes.number,
     }
 
-    //Componentes "contenedores" - logica y no UI
-    class MiComponente extends React.Component {
-        constructor(props) {
-            super(props);
+    const HolaHOC = Counter(Hola);
 
-            this.state = {
-                count: 0,
-            };
+    const mixin = {
+        handleClick() {
+            console.log('clickeado');
+        },
+    };
 
-            this.handleClick = this.handleClick.bind(this);
-            this.handleMouseEnter = this.handleMouseEnter.bind(this);
-        }
-
-        //Contexto: definimos datos accesibles en toda la aplicación
-        getChildContext() {
-            return {
-              count: this.state.count,
-            }
-        }
-
-        //Antes de renderizar, aun no esta el DOM y se puede modificar los estados del componente
-        componentWillMount() {
-            this.setState({
-                count: 1,
-            });
-            console.log('El componente se va a montar');
-        }
-
-        //Despues que la aplicación se monta, se pueden hacer peticiones HTTP
-        componentDidMount() {
-            document.addEventListener('click', this.handleClick);
-        }
-
-        //Cambiar estados si los props cambian
-        componentWillReceiveProps(nextProps) {
-            /*if (nextProps.name !== this.props.name) {
-                this.setState({
-                    count: this.state.count * 2,
-                });
-            }*/
-        }
-
-        //Devuelve si el componente se tiene que actualizar
-        shouldComponentUpdate(nextProps, nextState) {
-            if (nextState.count !== this.state.count) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        //Antes de actualizar el componente
-        componentWillUpdate() {
-            console.log('El componente se va a actualizar');
-        }
-
-        //Despues de actualizar el componente
-        componentDidUpdate() {
-            console.log('El componente se actualizó');
-        }
-
-        //Limpiar eventos pendientes o lentos
-        componentWillUnmount() {
-            document.removeEventListener('click', this.handleClick);
-        }
-
-        handleClick(){
-            this.setState({
-                count: this.state.count + 1,
-            });
-        }
-
-        //Eventos empiezan por handle + event
-        handleMouseEnter() {
-            this.setState({
-                count: this.state.count + 2,
-            });
-        }
-
+    const Componente = React.createClass({
+        mixins: [
+            mixin,
+        ],
         render() {
-            return (
-                <div>
-                    <Hola
-                        name={this.props.name}
-                        count={this.state.count}
-                        onClick={this.handleClick}
-                        onMouseEnter={this.handleMouseEnter}
-                    />
-                    <Hola2
-                        name={this.props.name}
-                        count={this.state.count}
-                        onClick={this.handleClick}
-                    />
-                </div>
-            );
-        };
-    }
-
-    //Definimos el tipo de dato a enviar en el Contexto
-    MiComponente.childContextTypes = {
-      count: React.PropTypes.number, //Funcion para definir tipo de una propiedad
-    }
+            return <div onClick={this.handleClick}>hola</div>;
+        }
+    })
 
     ReactDOM.render(
-        <MiComponente name="ReactJs"/>,
+            /* <HolaHOC />,*/
+            <Componente />,
         document.getElementById('app')
     );
 </script>
