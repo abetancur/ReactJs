@@ -5,86 +5,36 @@
     <title>Document</title>
 </head>
 <body>
-<main id="app"></main>
+<main id="root"></main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.24.0/babel.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react-dom.js"></script>
 <script type="text/babel">
-    /*Componentes de alto orden (HOC)
-     * reutilizar funcionalidades entre varios componente*/
-    function Counter(WrappedComponent) {
-        class CounterHOC extends React.Component {
-            constructor(props) {
-                super(props);
-
-                this.state = {
-                    count: 0,
-                }
-                this.handleClick = this.handleClick.bind(this);
-            }
-
-            handleClick() {
-                this.setState({
-                    count: this.state.count + 1,
-                });
-            }
-
-            getChildContext() {
-                return {
-                    count: this.state.count,
-                }
-            }
-
-            render() {
-                return (
-                        <WrappedComponent
-                                onClick={this.handleClick}
-                                {...this.props}
-                        />
-                )
-            }
+    class Toggle extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {isToggleOn: true};
+            this.handleClick = this.handleClick.bind(this);
         }
 
-        CounterHOC.childContextTypes = {
-            count: React.PropTypes.number,
-        }
-
-        return CounterHOC;
-    }
-
-    function Hola(props, context) {
-        return (
-                <h1 id="Title" onClick={props.onClick}>
-                    Hola {props.name} {context.count}
-                </h1>
-        );
-    }
-
-    Hola.contextTypes = {
-        count: React.PropTypes.number,
-    }
-
-    const HolaHOC = Counter(Hola);
-
-    const mixin = {
         handleClick() {
-            console.log('clickeado');
-        },
-    };
-
-    const Componente = React.createClass({
-        mixins: [
-            mixin,
-        ],
-        render() {
-            return <div onClick={this.handleClick}>hola</div>;
+            this.setState(prevState => ({
+                isToggleOn: !prevState.isToggleOn
+            }));
         }
-    })
+
+        render() {
+            return (
+                    <button onClick={this.handleClick}>
+                        {this.state.isToggleOn ? 'ON' : 'OFF'}
+                    </button>
+            );
+        }
+    }
 
     ReactDOM.render(
-            /* <HolaHOC />,*/
-            <Componente />,
-        document.getElementById('app')
+            <Toggle />,
+        document.getElementById('root')
     );
 </script>
 </body>
