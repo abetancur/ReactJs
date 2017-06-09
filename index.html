@@ -10,54 +10,61 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react-dom.js"></script>
 <script type="text/babel">
-    class Blog extends React.Component {
+    class Reservation extends React.Component {
         constructor(props) {
             super(props);
-            this.sidebar = this.sidebar.bind(this);
+            this.state = {
+                isGoing: true,
+                numberOfGuests: 2
+            };
+            this.handleInputChange = this.handleInputChange.bind(this);
+            this.handleSubmit      = this.handleSubmit.bind(this);
         }
 
-        sidebar() {
-            return (
-                <ul>
-                    {this.props.posts.map((post) => (
-                        <li key={post.id}>
-                            {post.id}
-                        </li>
-                    ))}
-                </ul>
-            );
+        handleInputChange(event) {
+            const target = event.target;
+            const value = target.type === 'checkbox' ? target.checked : target.value;
+            const name = target.name;
+
+            this.setState({
+                [name]: value
+            });
         }
 
-        content() {
-            return (
-                <div>
-                    {this.props.posts.map((post) => (
-                        <div key={post.id}>
-                            <h3>{post.title}</h3>
-                            <p>{post.content}</p>
-                        </div>
-                    ))}
-                </div>
-            );
+        handleSubmit(event) {
+            alert('An essay was submitted: ' + this.state.numberOfGuests);
         }
 
         render() {
             return(
-                <div>
-                    {this.sidebar()}
-                    <hr />
-                    {this.content()}
-                </div>
+                <form onSubmit={this.handleSubmit}>
+                    <label>
+                        Is going:
+                        <input
+                            name="isGoing"
+                            type="checkbox"
+                            checked={this.state.isGoing}
+                            onChange={this.handleInputChange}
+                        />
+                    </label>
+                    <br />
+                    <label>
+                        Number of guests:
+                        <input
+                            name="numberOfGuests"
+                            type="number"
+                            value={this.state.numberOfGuests}
+                            onChange={this.handleInputChange}
+                        />
+                    </label>
+                    <input type="submit" value="Submit" />
+                </form>
             );
         }
     }
 
-    const posts = [
-        {id: 1, title: 'Home', content: 'Welcome to learning React!'},
-        {id: 2, title: 'Installation', content: 'You can install React from npm.'}
-    ];
     ReactDOM.render(
-        <Blog posts={posts} />,
+        <Reservation />,
         document.getElementById('root')
     );
 </script>
