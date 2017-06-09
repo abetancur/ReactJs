@@ -10,29 +10,46 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react-dom.js"></script>
 <script type="text/babel">
-    function Blog(props) {
-        const sidebar = (
-            <ul>
-                {props.posts.map((post) =>
-                    <li key={post.id}>
-                        {post.id}
-                    </li>
-                )}
-            </ul>
-        );
-        const content = props.posts.map((post) =>
-                <div key={post.id}>
-                    <h3>{post.title}</h3>
-                    <p>{post.content}</p>
+    class Blog extends React.Component {
+        constructor(props) {
+            super(props);
+            this.sidebar = this.sidebar.bind(this);
+        }
+
+        sidebar() {
+            return (
+                <ul>
+                    {this.props.posts.map((post) => (
+                        <li key={post.id}>
+                            {post.id}
+                        </li>
+                    ))}
+                </ul>
+            );
+        }
+
+        content() {
+            return (
+                <div>
+                    {this.props.posts.map((post) => (
+                        <div key={post.id}>
+                            <h3>{post.title}</h3>
+                            <p>{post.content}</p>
+                        </div>
+                    ))}
                 </div>
-        );
-        return (
-            <div>
-                {sidebar}
-                <hr />
-                {content}
-            </div>
-        );
+            );
+        }
+
+        render() {
+            return(
+                <div>
+                    {this.sidebar()}
+                    <hr />
+                    {this.content()}
+                </div>
+            );
+        }
     }
 
     const posts = [
